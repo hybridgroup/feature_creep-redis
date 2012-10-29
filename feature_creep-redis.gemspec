@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "feature_creep-redis/version"
+require "feature_creep/version"
 
 Gem::Specification.new do |s|
   s.name = "feature_creep-redis"
