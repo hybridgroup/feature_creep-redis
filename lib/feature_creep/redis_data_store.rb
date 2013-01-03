@@ -15,8 +15,8 @@ class FeatureCreep
       @redis.sadd(scope_key(feature), scope)
     end
 
-    def activate_agent_id(feature, agent_id)
-      @redis.sadd(agent_id_key(feature), agent_id)
+    def activate_individual(feature, individual)
+      @redis.sadd(individual_key(feature), individual)
     end
 
     def activate_percentage(feature, percentage)
@@ -32,8 +32,8 @@ class FeatureCreep
       @redis.srem(scope_key(feature), scope)
     end
 
-    def deactivate_agent_id(feature, agent_id)
-      @redis.srem(agent_id_key(feature), agent_id)
+    def deactivate_individual(feature, individual)
+      @redis.srem(individual_key(feature), individual)
     end
 
     def deactivate_percentage(feature)
@@ -42,7 +42,7 @@ class FeatureCreep
 
     def deactivate_all(feature)
       @redis.del(scope_key(feature))
-      @redis.del(agent_id_key(feature))
+      @redis.del(individual_key(feature))
       @redis.del(percentage_key(feature))
       deactivate_globally(feature)
     end
@@ -56,8 +56,8 @@ class FeatureCreep
       @redis.smembers(scope_key(feature)) || []
     end
 
-    def active_agent_ids(feature)
-      @redis.smembers(agent_id_key(feature))
+    def active_individuals(feature)
+      @redis.smembers(individual_key(feature))
     end
 
     def active_percentage(feature)
@@ -69,14 +69,14 @@ class FeatureCreep
       @redis.sismember(global_key, feature)
     end
 
-    def agent_id_active?(feature, agent_id)
-      @redis.sismember(agent_id_key(feature), agent_id)
+    def individual_active?(feature, individual)
+      @redis.sismember(individual_key(feature), individual)
     end
 
-    def agent_id_within_active_percentage?(feature, agent_id)
+    def individual_within_active_percentage?(feature, individual)
       percentage = active_percentage(feature)
       return false if percentage.nil?
-      agent_id % 100 < percentage.to_i
+      individual % 100 < percentage.to_i
     end
 
     # Utility Methods
@@ -101,8 +101,8 @@ class FeatureCreep
       "#{key(name)}:scopes"
     end
 
-    def agent_id_key(name)
-      "#{key(name)}:agent_ids"
+    def individual_key(name)
+      "#{key(name)}:individuals"
     end
 
     def percentage_key(name)
